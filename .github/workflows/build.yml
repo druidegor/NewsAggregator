@@ -1,0 +1,60 @@
+name: KMP Project Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # Задача 1: Android и Desktop. Работает всегда (и при push, и при PR)
+  build-android-desktop:
+    name: Build Android & Desktop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build Android Debug
+        run: ./gradlew :composeApp:assembleDebug
+
+      - name: Build Desktop JVM
+        # Собираем десктопную версию (просто проверка компиляции)
+        run: ./gradlew :composeApp:assemble
+
+  # Задача 2: iOS. Работает ТОЛЬКО при создании Pull Request (экономим минуты)
+  check-ios:
+    name: Check iOS Compilation
+    if: github.event_name == 'pull_request'
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Check iOS Kotlin Compilation
+        # Команда, которая проверяет, компилируется ли Kotlin-код под iOS симулятор
+        run: ./gradlew :composeApp:compileKotlinIosSimulatorArm64
