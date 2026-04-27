@@ -9,6 +9,7 @@ class NewsApp: Application() {
     override fun onCreate() {
         super.onCreate()
         initKoin {
+            modules(androidDatabaseModule)
             androidLogger()
             androidContext(this@NewsApp)
         }

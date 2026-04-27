@@ -10,7 +10,9 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.buildkonfig)
-    kotlin("plugin.serialization") version "2.3.20"
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -42,6 +44,9 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
+
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
 
             implementation(libs.kotlinx.datetime)
             //noinspection NewerVersionAvailable
@@ -77,6 +82,7 @@ kotlin {
     }
 }
 
+
 android {
     namespace = "org.newsagg.project"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -106,6 +112,7 @@ android {
 
 dependencies {
     debugImplementation(libs.compose.uiTooling)
+    ksp(libs.room.compiler)
 }
 
 compose.desktop {
@@ -120,6 +127,9 @@ compose.desktop {
     }
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
 
 
 buildkonfig {

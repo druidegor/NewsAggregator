@@ -11,15 +11,20 @@ class NewsApiImpl(
     private val client: HttpClient
 ): NewsApi {
 
-    override suspend fun getNews(query: String, language: String): NewsResponseDto {
+    override suspend fun getNewsByQuery(query: String): NewsResponseDto {
 
-       val response = client.get("everything") {
+       return client.get("everything") {
             parameter("q", query)
-            parameter("language", language)
+            parameter("language", "en")
         }.body<NewsResponseDto>()
 
-        println("DEBUG: Received ${response.articles.size} articles")
+    }
 
-        return response
+    override suspend fun getTopHeadlines(): NewsResponseDto {
+
+        return client.get("top-headlines") {
+            parameter("category", "technology")
+            parameter("language", "en")
+        }.body<NewsResponseDto>()
     }
 }

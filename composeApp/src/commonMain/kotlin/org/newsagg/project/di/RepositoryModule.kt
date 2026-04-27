@@ -6,5 +6,5 @@ import org.newsagg.project.domain.repository.NewsRepository
 
 val repositoryModule = module {
 
-    single<NewsRepository> { NewsRepositoryImpl(get()) }
+    single<NewsRepository> { NewsRepositoryImpl(get(), get()) }
 }
