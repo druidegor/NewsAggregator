@@ -20,7 +20,7 @@ class NewsFeedViewModel(
             _state.value = NewsFeedState(isLoading = true)
             try {
                 val articles = getNewsUseCase("Android", "en")
-                _state.value = NewsFeedState(articles = articles)
+                _state.value = NewsFeedState(articles = articles, isLoading = false)
             } catch (e: Exception) {
             }
         }

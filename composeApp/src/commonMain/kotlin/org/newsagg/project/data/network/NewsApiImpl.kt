@@ -13,9 +13,13 @@ class NewsApiImpl(
 
     override suspend fun getNews(query: String, language: String): NewsResponseDto {
 
-       return client.get("everything") {
+       val response = client.get("everything") {
             parameter("q", query)
             parameter("language", language)
-        }.body()
+        }.body<NewsResponseDto>()
+
+        println("DEBUG: Received ${response.articles.size} articles")
+
+        return response
     }
 }

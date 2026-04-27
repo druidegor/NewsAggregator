@@ -18,7 +18,10 @@ fun NewsFeedScreen(
 
     val state by viewModel.state.collectAsState()
 
-    Box(modifier = modifier.fillMaxSize()) {
-
+    if (!state.isLoading) {
+        Box(modifier = modifier.fillMaxSize()) {
+            Text(text = state.articles.first().title)
+        }
     }
+
 }

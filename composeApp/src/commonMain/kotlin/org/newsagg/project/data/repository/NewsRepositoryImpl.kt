@@ -10,6 +10,8 @@ class NewsRepositoryImpl(
 ): NewsRepository {
 
     override suspend fun getNews(query: String, language: String): List<Article> {
-        return newsApi.getNews(query, language).articles.map { it.toDomain() }
+        return newsApi.getNews(query, language).articles.map {
+            it.toDomain()
+        }
     }
 }
