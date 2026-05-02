@@ -45,6 +45,10 @@ kotlin {
         }
         commonMain.dependencies {
 
+            implementation(libs.androidx.paging.common)
+            implementation(libs.androidx.paging.compose)
+            implementation(libs.androidx.room.paging)
+
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
 

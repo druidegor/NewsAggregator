@@ -1,12 +1,21 @@
 package org.newsagg.project.data.local.model
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Index
 
 @Entity(
     tableName = "articles",
-    primaryKeys = ["url", "publishedAt"],
-    indices = [Index(value = ["publishedAt"])]
+    primaryKeys = ["url", "topic"],
+    foreignKeys = [
+        ForeignKey(
+            entity = SubscriptionDbModel::class,
+            parentColumns = ["topic"],
+            childColumns = ["topic"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["topic"])]
 )
 data class ArticleDbModel(
     val title: String,
@@ -15,4 +24,5 @@ data class ArticleDbModel(
     val sourceName: String,
     val url: String,
     val imageUrl: String?,
+    val topic: String
 )

@@ -1,6 +1,7 @@
 package org.newsagg.project.data.mapper
 
 import org.newsagg.project.data.local.model.ArticleDbModel
+import org.newsagg.project.data.local.model.SubscriptionDbModel
 import org.newsagg.project.data.network.model.ArticleDto
 import org.newsagg.project.domain.model.Article
 import kotlin.time.Clock
@@ -35,7 +36,8 @@ fun ArticleDto.toDbModel(topic: String): ArticleDbModel {
         publishedAt = publishedAt?.toTimestamp() ?: 0,
         sourceName = source?.name ?: "",
         url = url ?: "",
-        imageUrl = urlToImage
+        imageUrl = urlToImage,
+        topic = topic
     )
 }
 
@@ -47,5 +49,11 @@ fun ArticleDbModel.toDomain(): Article {
         sourceName = sourceName,
         url = url,
         imageUrl = imageUrl
+    )
+}
+
+fun String.toDbModel(): SubscriptionDbModel {
+    return SubscriptionDbModel(
+        topic = this
     )
 }

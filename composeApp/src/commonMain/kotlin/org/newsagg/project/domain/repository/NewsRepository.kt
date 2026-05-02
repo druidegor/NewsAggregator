@@ -5,14 +5,15 @@ import org.newsagg.project.domain.model.Article
 
 interface NewsRepository {
 
-    suspend fun searchNewsByQuery(query: String): List<Article>
+    fun getAllSubscriptions(): Flow<List<String>>
+
+    suspend fun addSubscription(topic: String)
+
+    suspend fun deleteSubscription(topic: String)
+
+    fun getArticlesByTopics(topics: List<String>): Flow<List<Article>>
 
     suspend fun getTopHeadlines(): List<Article>
-//    suspend fun addNewsToBookmarks(article: Article): Boolean
-//
-//    suspend fun removeNewsFromBookmarks(article: Article): Boolean
-//
-//    suspend fun getBookmarks(): List<Article>
 
 
 }
