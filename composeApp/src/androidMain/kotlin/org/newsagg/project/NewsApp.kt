@@ -5,13 +5,15 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.newsagg.project.di.initKoin
 
-class NewsApp: Application() {
+class NewsApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        initKoin {
-            modules(androidDatabaseModule)
-            androidLogger()
-            androidContext(this@NewsApp)
-        }
+        initKoin(
+            appDeclaration = {
+                androidLogger()
+                androidContext(this@NewsApp)
+            },
+            additionalModules = listOf(androidDatabaseModule)
+        )
     }
 }
