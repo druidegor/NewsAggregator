@@ -24,8 +24,13 @@ ktor = "3.0.0"
 koin = "4.0.0"
 material3 = "1.10.0-alpha05"
 buildkonfig = "0.15.1"
+turbine = "1.1.0"
+kermit = "2.0.5"
 
 [libraries]
+touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }

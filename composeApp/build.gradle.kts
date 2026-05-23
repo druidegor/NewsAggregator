@@ -45,10 +45,9 @@ kotlin {
         }
         commonMain.dependencies {
 
-            implementation(libs.androidx.paging.common)
-            implementation(libs.androidx.paging.compose)
-            implementation(libs.androidx.room.paging)
+            implementation(libs.touchlab.kermit)
 
+            implementation(libs.kotlinx.datetime)
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
 
@@ -76,12 +75,21 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
         commonTest.dependencies {
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.turbine)
             implementation(libs.kotlin.test)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.ktor.client.okhttp)
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+        }
+        androidUnitTest.dependencies {
+            implementation(libs.kotlin.testJunit)
+        }
+
+        jvmTest.dependencies {
+            implementation(libs.kotlin.testJunit)
         }
     }
 }
