@@ -1,5 +1,6 @@
 package org.newsagg.project.data.repository
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -29,22 +30,30 @@ class NewsRepositoryImpl(
         }
     }
 
-    override suspend fun loadArticles(topic: String): List<Article> {
+    override suspend fun loadArticles(topic: String): DataResult<Unit>{
         return try {
             val response = apiService.getNewsByQuery(topic)
-            val articles = response.articles.map { it.toDomain() }
             newsDao.addArticles(response.articles.map { it.toDbModel(topic) })
-            articles
+            DataResult.Success(Unit)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            emptyList()
+            Logger.withTag("NewsRepository").e(e) { "Ошибка при загрузке статей для: $topic" }
+            DataResult.Error(e)
         }
     }
 
-    override suspend fun addSubscription(topic: String) {
-        newsDao.addSubscription(SubscriptionDbModel(topic))
-        loadArticles(topic)
+    override suspend fun addSubscription(topic: String): DataResult<Unit> {
+        return try {
+            newsDao.addSubscription(SubscriptionDbModel(topic))
+            loadArticles(topic)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Logger.withTag("NewsRepository").e(e) { "Не удалось добавить подписку на: $topic" }
+            DataResult.Error(e)
+        }
+
     }
 
     override suspend fun deleteSubscription(topic: String) {
