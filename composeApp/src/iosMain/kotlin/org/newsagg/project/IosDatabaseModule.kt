@@ -2,12 +2,14 @@ package org.newsagg.project
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import kotlinx.cinterop.ExperimentalForeignApi
 import org.koin.dsl.module
 import org.newsagg.project.data.local.NewsDatabase
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
+@OptIn(ExperimentalForeignApi::class)
 val iosDatabaseModule = module {
     single<RoomDatabase.Builder<NewsDatabase>> {
         val documentDirectory = NSFileManager.defaultManager.URLForDirectory(

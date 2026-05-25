@@ -1,3 +1,4 @@
+
 package org.newsagg.project.data.local
 
 import androidx.room.ConstructedBy

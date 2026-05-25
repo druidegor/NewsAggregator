@@ -26,6 +26,7 @@ class NewsRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            Logger.withTag("NewsRepository").e(e) { "Data is not forced" }
             DataResult.Error(e)
         }
     }

@@ -27,6 +27,10 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      # --- ВОТ ЭТОТ ШАГ МЫ ДОБАВИЛИ ---
+      - name: Run Common, Android and Desktop Tests
+        run: ./gradlew :composeApp:allTests
+
       - name: Build Android Debug
         run: ./gradlew :composeApp:assembleDebug
 
