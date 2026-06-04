@@ -73,7 +73,7 @@ class NewsFeedViewModelTest {
     }
 
     @Test
-    fun init_block_emits_Loading_then_Error_states_when_error_throws() = runTest {
+    fun init_block_emits_Loading_then_Error_states_when_error_is_thrown() = runTest {
 
         newsApi.shouldTrowException = Exception("No internet connection")
         val viewModel = createViewModel()

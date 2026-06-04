@@ -19,12 +19,13 @@ class FakeNewsDao: NewsDao {
         subscriptions.value += subscription
     }
 
-    override suspend fun deleteArticlesByTopics(topics: List<String>) {
-        articles.value.filter { it.topic !in topics }
-    }
+//    override suspend fun deleteArticlesByTopics(topics: List<String>) {
+//        articles.value = articles.value.filter { it.topic !in topics }
+//    }
 
     override suspend fun deleteSubscription(subscription: SubscriptionDbModel) {
-        subscriptions.value.filter { it != subscription }
+        subscriptions.value = subscriptions.value.filter { it != subscription }
+        articles.value = articles.value.filter { it.topic != subscription.topic}
     }
 
     override fun getAllSubscriptions(): Flow<List<SubscriptionDbModel>> {
@@ -34,4 +35,6 @@ class FakeNewsDao: NewsDao {
     override fun getArticlesByTopic(topics: List<String>): Flow<List<ArticleDbModel>> {
         return articles
     }
+
+
 }

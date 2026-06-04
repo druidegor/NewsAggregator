@@ -7,7 +7,6 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # Задача 1: Android и Desktop. Работает всегда (и при push, и при PR)
   build-android-desktop:
     name: Build Android & Desktop
     runs-on: ubuntu-latest
@@ -27,7 +26,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # --- ВОТ ЭТОТ ШАГ МЫ ДОБАВИЛИ ---
+
       - name: Run Common, Android and Desktop Tests
         run: ./gradlew :composeApp:allTests
 
@@ -35,10 +34,8 @@ jobs:
         run: ./gradlew :composeApp:assembleDebug
 
       - name: Build Desktop JVM
-        # Собираем десктопную версию (просто проверка компиляции)
         run: ./gradlew :composeApp:assemble
 
-  # Задача 2: iOS. Работает ТОЛЬКО при создании Pull Request (экономим минуты)
   check-ios:
     name: Check iOS Compilation
     if: github.event_name == 'pull_request'
@@ -60,5 +57,4 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Check iOS Kotlin Compilation
-        # Команда, которая проверяет, компилируется ли Kotlin-код под iOS симулятор
         run: ./gradlew :composeApp:compileKotlinIosSimulatorArm64
