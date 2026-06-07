@@ -3,16 +3,25 @@ package org.newsagg.project
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.slide
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import org.koin.compose.viewmodel.koinViewModel
+import org.newsagg.project.presentation.component.RootComponent
 import org.newsagg.project.presentation.screen.NewsFeedScreen
-import org.newsagg.project.presentation.viewmodel.NewsFeedViewModel
 
 @Composable
-@Preview
-fun App() {
+fun App(rootComponent: RootComponent) {
     MaterialTheme {
-        //sdfghjkdefgbhnjhgf
-        val viewModel: NewsFeedViewModel = koinViewModel()
-        NewsFeedScreen(viewModel = viewModel)
+
+        Children(
+            stack = rootComponent.childStack,
+            animation = stackAnimation(slide())
+        ) { target ->
+            when (val child = target.instance) {
+                is RootComponent.Child.Feed -> NewsFeedScreen(component = child.component)
+            }
+
+        }
     }
 }

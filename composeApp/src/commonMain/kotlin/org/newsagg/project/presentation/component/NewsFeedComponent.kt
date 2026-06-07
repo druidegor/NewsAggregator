@@ -36,7 +36,7 @@ class DefaultNewsFeedComponent(
     private val scope = componentContext.coroutineScope()
 
     init {
-
+        loadNews()
     }
 
     override fun loadNews() {
