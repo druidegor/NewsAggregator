@@ -48,9 +48,6 @@ kotlin {
             implementation(libs.decompose)
             implementation(libs.decompose.compose)
 
-            implementation(libs.androidx.paging.common)
-            implementation(libs.androidx.paging.compose)
-            implementation(libs.androidx.room.paging)
             implementation(libs.touchlab.kermit)
 
             implementation(libs.kotlinx.datetime)

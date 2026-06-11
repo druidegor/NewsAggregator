@@ -8,7 +8,6 @@ import com.arkivanov.decompose.value.Value
 import kotlinx.serialization.Serializable
 import org.newsagg.project.domain.usecase.GetTopHeadlinesUseCase
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 interface RootComponent {
 
@@ -20,10 +19,10 @@ interface RootComponent {
 }
 
 class DefaultRootComponent(
-    componentContext: ComponentContext
+    componentContext: ComponentContext,
+    private val getTopHeadlinesUseCase: GetTopHeadlinesUseCase
 ): RootComponent, ComponentContext by componentContext, KoinComponent {
 
-    private val getTopHeadlinesUseCase: GetTopHeadlinesUseCase by inject()
 
     private val navigation = StackNavigation<Config>()
 

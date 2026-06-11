@@ -6,7 +6,7 @@ import org.newsagg.project.data.network.model.NewsResponseDto
 
 class FakeNewsApi: NewsApi {
 
-    var callCount = 0
+    var callCount= 0
     val newsProvideResponse: () -> NewsResponseDto = { NewsResponseDto(emptyList()) }
     var shouldTrowException: Exception? = null
 

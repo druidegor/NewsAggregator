@@ -3,15 +3,11 @@ package org.newsagg.project.presentation.component
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.lifecycle.doOnDestroy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.newsagg.project.domain.model.Article
 import org.newsagg.project.domain.usecase.GetTopHeadlinesUseCase
 import org.newsagg.project.util.DataResult
+import org.newsagg.project.util.coroutineScope
 
 interface NewsFeedComponent {
 
@@ -61,14 +57,4 @@ class DefaultNewsFeedComponent(
         }
     }
 
-}
-
-fun ComponentContext.coroutineScope(): CoroutineScope {
-
-    val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-
-    lifecycle.doOnDestroy {
-        scope.cancel()
-    }
-    return scope
 }
