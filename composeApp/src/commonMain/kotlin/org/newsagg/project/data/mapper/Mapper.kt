@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package org.newsagg.project.data.mapper
 
 import org.newsagg.project.data.local.model.ArticleDbModel
@@ -12,7 +14,7 @@ fun ArticleDto.toDomain(): Article {
     return Article(
         title = title ?: "",
         description = description ?: "",
-        publishedAt = publishedAt?.toTimestamp() ?: 0,
+        publishedAt = publishedAt?.toInstantTimestamp() ?: Clock.System.now(),
         sourceName = source?.name ?: "",
         url = url ?: "",
         imageUrl = urlToImage
@@ -20,7 +22,16 @@ fun ArticleDto.toDomain(): Article {
 }
 
 @OptIn(ExperimentalTime::class)
-fun String.toTimestamp(): Long {
+fun String.toInstantTimestamp(): Instant{
+    return try {
+        Instant.parse(this)
+    } catch (e: Exception) {
+        Clock.System.now()
+    }
+}
+
+
+fun String.toLongTimestamp(): Long {
     return try {
         val instant = Instant.parse(this)
         instant.toEpochMilliseconds()
@@ -28,12 +39,11 @@ fun String.toTimestamp(): Long {
         Clock.System.now().toEpochMilliseconds()
     }
 }
-
 fun ArticleDto.toDbModel(topic: String): ArticleDbModel {
     return ArticleDbModel(
         title = title ?: "",
         description = description ?: "",
-        publishedAt = publishedAt?.toTimestamp() ?: 0,
+        publishedAt = publishedAt?.toLongTimestamp() ?: 0,
         sourceName = source?.name ?: "",
         url = url ?: "",
         imageUrl = urlToImage,
@@ -45,15 +55,9 @@ fun ArticleDbModel.toDomain(): Article {
     return Article(
         title = title,
         description = description,
-        publishedAt = publishedAt,
+        publishedAt = Instant.fromEpochMilliseconds(publishedAt),
         sourceName = sourceName,
         url = url,
         imageUrl = imageUrl
-    )
-}
-
-fun String.toDbModel(): SubscriptionDbModel {
-    return SubscriptionDbModel(
-        topic = this
     )
 }

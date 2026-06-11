@@ -11,8 +11,8 @@ import org.newsagg.project.domain.usecase.GetTopHeadlinesUseCase
 val domainModule = module {
 
     factory { GetTopHeadlinesUseCase(get()) }
-    factory { GetArticlesByTopicsUseCase(get()) }
-    factory { GetAllSubscriptionsUseCase(get()) }
-    factory { DeleteSubscriptionUseCase(get()) }
-    factory { AddSubscriptionUseCase(get()) }
+//    factory { GetArticlesByTopicsUseCase(get()) }
+//    factory { GetAllSubscriptionsUseCase(get()) }
+//    factory { DeleteSubscriptionUseCase(get()) }
+//    factory { AddSubscriptionUseCase(get()) }
 }
