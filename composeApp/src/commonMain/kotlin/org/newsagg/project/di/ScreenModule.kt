@@ -9,7 +9,8 @@ val screenModule = module {
     factory { (context: ComponentContext) ->
         DefaultRootComponent(
             context,
-            get()
+            observeArticlesUseCase = get(),
+            refreshArticlesUseCase = get()
         )
     }
 }

@@ -95,6 +95,10 @@ kotlin {
             implementation(libs.kotlin.testJunit)
         }
     }
+
+    compilerOptions {
+        freeCompilerArgs.add("-opt-in=kotlin.time.ExperimentalTime")
+    }
 }
 
 
