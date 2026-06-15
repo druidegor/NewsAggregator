@@ -14,6 +14,7 @@ val databaseModule = module {
         builder
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
     }
     single<NewsDao> { get<NewsDatabase>().newsDao() }

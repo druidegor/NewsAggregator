@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package org.newsagg.project.data.repository
 
 import co.touchlab.kermit.Logger
@@ -12,34 +14,33 @@ import org.newsagg.project.data.network.api.NewsApi
 import org.newsagg.project.domain.model.Article
 import org.newsagg.project.domain.repository.NewsRepository
 import org.newsagg.project.util.DataResult
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class NewsRepositoryImpl(
     private val apiService: NewsApi,
     private val newsDao: NewsDao
 ) : NewsRepository {
 
-    override suspend fun getTopHeadlines(): DataResult<List<Article>> {
-        return try {
-            val response = apiService.getTopHeadlines()
-            val articles = response.articles.map { it.toDomain() }
-            DataResult.Success(articles)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            Logger.withTag("NewsRepository").e(e) { "Data is not forced" }
-            DataResult.Error(e)
-        }
+    override fun observeArticles(topic: String): Flow<List<Article>> {
+        return newsDao.observeArticles(topic).map { list -> list.map { it.toDomain() }}
     }
 
-    override suspend fun loadArticles(topic: String): DataResult<Unit>{
+    override suspend fun refreshArticles(topic: String): DataResult<Unit> {
         return try {
-            val response = apiService.getNewsByQuery(topic)
-            newsDao.addArticles(response.articles.map { it.toDbModel(topic) })
+            val result = if (topic == "headlines") {
+                apiService.getTopHeadlines()
+            } else {
+                apiService.getNewsByQuery(topic)
+            }
+            val currentTime = Clock.System.now()
+
+            newsDao.addArticles(result.articles.map { it.toDbModel(topic,currentTime) })
             DataResult.Success(Unit)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Logger.withTag("NewsRepository").e(e) { "Data is not forced" }
+            Logger.withTag("NewsRepository").e(e) { "Data is not refreshed" }
             DataResult.Error(e)
         }
     }
@@ -47,7 +48,7 @@ class NewsRepositoryImpl(
     override suspend fun addSubscription(topic: String): DataResult<Unit> {
         return try {
             newsDao.addSubscription(SubscriptionDbModel(topic))
-            loadArticles(topic)
+            refreshArticles(topic)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -65,7 +66,4 @@ class NewsRepositoryImpl(
         return newsDao.getAllSubscriptions().map { list -> list.map { it.topic } }
     }
 
-    override fun getArticlesByTopics(topics: List<String>): Flow<List<Article>> {
-        return newsDao.getArticlesByTopic(topics).map { list -> list.map { it.toDomain() } }
-    }
 }

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.IGNORE
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import org.newsagg.project.data.local.model.ArticleDbModel
@@ -21,12 +22,10 @@ interface NewsDao {
     @Delete
     suspend fun deleteSubscription(subscription: SubscriptionDbModel)
 
-    @Query("SELECT * FROM articles WHERE topic in (:topics) ORDER BY publishedAt DESC")
-    fun getArticlesByTopic(topics: List<String>): Flow<List<ArticleDbModel>>
+    @Query("SELECT * FROM articles WHERE topic in (:topic) ORDER BY publishedAt DESC")
+    fun observeArticles(topic: String): Flow<List<ArticleDbModel>>
 
-    @Insert(onConflict = IGNORE)
+    @Insert(onConflict = REPLACE)
     suspend fun addArticles(articles: List<ArticleDbModel>)
 
-//    @Query("DELETE FROM articles WHERE topic IN (:topics)")
-//    suspend fun deleteArticlesByTopics(topics: List<String>)
 }
