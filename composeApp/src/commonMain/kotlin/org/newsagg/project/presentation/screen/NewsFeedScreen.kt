@@ -6,19 +6,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.newsagg.project.presentation.viewmodel.NewsFeedViewModel
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import org.newsagg.project.presentation.component.NewsFeedComponent
 
 @Composable
 fun NewsFeedScreen(
-    viewModel: NewsFeedViewModel,
+    component: NewsFeedComponent,
     modifier: Modifier = Modifier
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by component.state.subscribeAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
         if (state.isLoading) {

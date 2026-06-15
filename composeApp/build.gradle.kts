@@ -45,6 +45,9 @@ kotlin {
         }
         commonMain.dependencies {
 
+            implementation(libs.decompose)
+            implementation(libs.decompose.compose)
+
             implementation(libs.touchlab.kermit)
 
             implementation(libs.kotlinx.datetime)

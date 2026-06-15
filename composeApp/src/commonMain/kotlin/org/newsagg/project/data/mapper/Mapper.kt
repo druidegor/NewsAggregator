@@ -3,7 +3,6 @@
 package org.newsagg.project.data.mapper
 
 import org.newsagg.project.data.local.model.ArticleDbModel
-import org.newsagg.project.data.local.model.SubscriptionDbModel
 import org.newsagg.project.data.network.model.ArticleDto
 import org.newsagg.project.domain.model.Article
 import kotlin.time.Clock
