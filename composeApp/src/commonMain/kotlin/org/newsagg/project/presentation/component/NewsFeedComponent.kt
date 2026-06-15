@@ -5,7 +5,6 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import kotlinx.coroutines.launch
 import org.newsagg.project.domain.model.Article
-import org.newsagg.project.domain.usecase.GetTopHeadlinesUseCase
 import org.newsagg.project.util.DataResult
 import org.newsagg.project.util.coroutineScope
 

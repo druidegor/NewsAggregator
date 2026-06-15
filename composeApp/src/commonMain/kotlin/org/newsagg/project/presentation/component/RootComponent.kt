@@ -6,7 +6,6 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
 import kotlinx.serialization.Serializable
-import org.newsagg.project.domain.usecase.GetTopHeadlinesUseCase
 import org.koin.core.component.KoinComponent
 
 interface RootComponent {

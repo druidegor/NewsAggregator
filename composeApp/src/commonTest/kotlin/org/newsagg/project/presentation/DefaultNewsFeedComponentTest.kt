@@ -12,7 +12,6 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.newsagg.project.data.repository.NewsRepositoryImpl
-import org.newsagg.project.domain.usecase.GetTopHeadlinesUseCase
 import org.newsagg.project.fake.FakeNewsApi
 import org.newsagg.project.fake.FakeNewsDao
 import org.newsagg.project.presentation.component.DefaultNewsFeedComponent

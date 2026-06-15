@@ -5,11 +5,11 @@ import org.newsagg.project.domain.model.Article
 import org.newsagg.project.util.DataResult
 
 interface NewsRepository {
-    suspend fun getTopHeadlines(): DataResult<List<Article>>
-    suspend fun loadArticles(topic: String): DataResult<Unit>
-    
     suspend fun addSubscription(topic: String): DataResult<Unit>
     suspend fun deleteSubscription(topic: String)
     fun getAllSubscriptions(): Flow<List<String>>
-    fun getArticlesByTopics(topics: List<String>): Flow<List<Article>>
+
+    fun observeArticles(topic: String): Flow<List<Article>>
+
+    suspend fun refreshArticles (topic: String): DataResult<Unit>
 }
