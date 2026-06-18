@@ -2,6 +2,11 @@
 
 package org.newsagg.project.data.repository
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +31,24 @@ class NewsRepositoryImpl(
         return newsDao.observeArticles(topic).map { list -> list.map { it.toDomain() }}
     }
 
+    @OptIn(ExperimentalPagingApi::class)
+    override fun observeArticlesPaging(topic: String): Flow<PagingData<Article>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                prefetchDistance = 5,
+                enablePlaceholders = false
+            ),
+            remoteMediator = NewsRemoteMediator(
+                topic = topic,
+                newsDao = newsDao,
+                apiService = apiService
+            ),
+            pagingSourceFactory = { newsDao.pagingSource(topic)}
+        ).flow.map { pagingData ->
+            pagingData.map { it.toDomain() }
+        }
+    }
     override suspend fun refreshArticles(topic: String): DataResult<Unit> {
         return try {
             newsDao.addSubscription(SubscriptionDbModel(topic))

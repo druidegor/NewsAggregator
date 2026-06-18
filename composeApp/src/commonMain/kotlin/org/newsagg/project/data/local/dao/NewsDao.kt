@@ -1,14 +1,17 @@
 package org.newsagg.project.data.local.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.IGNORE
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import org.newsagg.project.data.local.model.ArticleDbModel
 import org.newsagg.project.data.local.model.SubscriptionDbModel
+import org.newsagg.project.domain.model.Article
 
 @Dao
 interface NewsDao {
@@ -25,7 +28,26 @@ interface NewsDao {
     @Query("SELECT * FROM articles WHERE topic in (:topic) ORDER BY publishedAt DESC")
     fun observeArticles(topic: String): Flow<List<ArticleDbModel>>
 
+    @Query("SELECT * FROM articles WHERE topic in (:topic) ORDER BY publishedAt DESC")
+    fun pagingSource(topic: String): PagingSource<Int, ArticleDbModel>
+
+    @Query("DELETE FROM articles WHERE topic = :topic")
+    suspend fun clearArticlesByTopic(topic: String)
     @Insert(onConflict = REPLACE)
     suspend fun addArticles(articles: List<ArticleDbModel>)
+
+    @Transaction
+    suspend fun updateArticlesTransaction(
+        topic: String,
+        subscription: SubscriptionDbModel,
+        articles: List<ArticleDbModel>,
+        shouldClear: Boolean
+    ) {
+        if (shouldClear) {
+            clearArticlesByTopic(topic)
+        }
+        addSubscription(subscription)
+        addArticles(articles)
+    }
 
 }

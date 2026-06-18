@@ -45,6 +45,10 @@ kotlin {
         }
         commonMain.dependencies {
 
+            implementation(libs.androidx.paging.common)
+            implementation(libs.androidx.paging.compose)
+            implementation(libs.room.paging)
+
             implementation(libs.decompose)
             implementation(libs.decompose.compose)
 
