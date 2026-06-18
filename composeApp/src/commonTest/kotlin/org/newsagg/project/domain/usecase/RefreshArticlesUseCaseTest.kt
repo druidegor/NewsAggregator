@@ -7,18 +7,18 @@ import org.newsagg.project.fake.FakeNewsDao
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class GetTopHeadlinesUseCaseTest {
+class RefreshArticlesUseCaseTest {
 
     @Test
-    fun getTopHeadlinesUseCase_shouldProxyCallToRepository() = runTest {
+    fun refreshArticlesUseCase_shouldProxyCallToRepository() = runTest {
 
         val newsApi = FakeNewsApi()
         val newsDao = FakeNewsDao()
         val fakeRepository = NewsRepositoryImpl(newsApi,newsDao)
 
-        val useCase = GetTopHeadlinesUseCase(fakeRepository)
+        val useCase = RefreshArticlesUseCase(fakeRepository)
 
-        useCase.invoke()
+        useCase.invoke("headlines")
 
         assertEquals(expected= 1, actual= newsApi.callCount)
     }

@@ -28,6 +28,7 @@ class NewsRepositoryImpl(
 
     override suspend fun refreshArticles(topic: String): DataResult<Unit> {
         return try {
+            newsDao.addSubscription(SubscriptionDbModel(topic))
             val result = if (topic == "headlines") {
                 apiService.getTopHeadlines()
             } else {

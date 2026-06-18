@@ -12,6 +12,8 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.newsagg.project.data.repository.NewsRepositoryImpl
+import org.newsagg.project.domain.usecase.ObserveArticlesUseCase
+import org.newsagg.project.domain.usecase.RefreshArticlesUseCase
 import org.newsagg.project.fake.FakeNewsApi
 import org.newsagg.project.fake.FakeNewsDao
 import org.newsagg.project.presentation.component.DefaultNewsFeedComponent
@@ -32,7 +34,10 @@ class DefaultNewsFeedComponentTest {
     private val newsApi = FakeNewsApi()
     private val newsDao = FakeNewsDao()
     private val repository = NewsRepositoryImpl(newsApi,newsDao)
-    private val getTopHeadlinesUseCase = GetTopHeadlinesUseCase(repository)
+
+    private val observeArticlesUseCase = ObserveArticlesUseCase(repository)
+    private val refreshArticlesUseCase = RefreshArticlesUseCase(repository)
+
 
     @BeforeTest
     fun setUp() {
@@ -47,11 +52,13 @@ class DefaultNewsFeedComponentTest {
     }
 
     private fun createComponent(
-        headlinesUseCase: GetTopHeadlinesUseCase = getTopHeadlinesUseCase
+        observeArticles: ObserveArticlesUseCase = observeArticlesUseCase,
+        refreshArticles: RefreshArticlesUseCase = refreshArticlesUseCase
     ): NewsFeedComponent {
         return DefaultNewsFeedComponent(
             componentContext = context,
-            getTopHeadlinesUseCase = headlinesUseCase
+            observeArticlesUseCase = observeArticles,
+            refreshArticlesUseCase = refreshArticles
         )
     }
 
@@ -66,13 +73,13 @@ class DefaultNewsFeedComponentTest {
         lifecycle.resume()
         runCurrent()
 
-        assertEquals(NewsFeedComponent.NewsFeedState(emptyList(), isLoading = true, error = null),component.state.value)
+        assertEquals(NewsFeedComponent.NewsFeedState(emptyList(), refreshing = true, error = null),component.state.value)
 
         advanceTimeBy(500)
         runCurrent()
 
         val finalState = component.state.value
-        assertEquals(false, finalState.isLoading)
+        assertEquals(false, finalState.refreshing)
         assertEquals(null,finalState.error)
 
     }
@@ -87,13 +94,13 @@ class DefaultNewsFeedComponentTest {
 
         runCurrent()
 
-        assertEquals(NewsFeedComponent.NewsFeedState(emptyList(), isLoading = true, error = null),component.state.value)
+        assertEquals(NewsFeedComponent.NewsFeedState(emptyList(), refreshing = true, error = null),component.state.value)
 
         advanceTimeBy(500)
         runCurrent()
 
         val finalState = component.state.value
-        assertEquals(false, finalState.isLoading)
+        assertEquals(false, finalState.refreshing)
         assertEquals("No internet connection",finalState.error)
         assertEquals(emptyList(),finalState.articles)
 

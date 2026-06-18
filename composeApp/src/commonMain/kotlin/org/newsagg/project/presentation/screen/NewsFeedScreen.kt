@@ -24,18 +24,16 @@ fun NewsFeedScreen(
     component: NewsFeedComponent,
     modifier: Modifier = Modifier
 ) {
-    // Подписываемся на единственный источник состояния компонента
     val state by component.state.subscribeAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
 
-            // 1. Ошибка показывается как БАННЕР сверху, только если в кэше уже есть данные
             AnimatedVisibility(visible = state.articles.isNotEmpty() && state.error != null) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.Red.copy(alpha = 0.8f)) // Временный цвет баннера до настройки темы
+                        .background(Color.Red.copy(alpha = 0.8f))
                         .padding(8.dp)
                 ) {
                     Text(

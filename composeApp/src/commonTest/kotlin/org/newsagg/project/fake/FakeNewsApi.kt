@@ -7,7 +7,7 @@ import org.newsagg.project.data.network.model.NewsResponseDto
 class FakeNewsApi: NewsApi {
 
     var callCount= 0
-    val newsProvideResponse: () -> NewsResponseDto = { NewsResponseDto(emptyList()) }
+    var newsProvideResponse: () -> NewsResponseDto = { NewsResponseDto(emptyList()) }
     var shouldTrowException: Exception? = null
 
     override suspend fun getNewsByQuery(query: String, page: Int, pageSize: Int): NewsResponseDto {
