@@ -7,8 +7,11 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
 import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
-import org.newsagg.project.domain.usecase.ObserveArticlesUseCase
-import org.newsagg.project.domain.usecase.RefreshArticlesUseCase
+import org.newsagg.project.domain.usecase.AddSubscriptionUseCase
+import org.newsagg.project.domain.usecase.DeleteSubscriptionUseCase
+import org.newsagg.project.domain.usecase.GetAllSubscriptionsUseCase
+import org.newsagg.project.domain.usecase.ObserveArticlesPagingUseCase
+import org.newsagg.project.presentation.component.RootComponent.Child.Feed
 
 interface RootComponent {
 
@@ -21,8 +24,10 @@ interface RootComponent {
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
-    private val observeArticlesUseCase: ObserveArticlesUseCase,
-    private val refreshArticlesUseCase: RefreshArticlesUseCase
+    private val getAllSubscriptionsUseCase: GetAllSubscriptionsUseCase,
+    private val observeArticlesPagingUseCase: ObserveArticlesPagingUseCase,
+    private val addSubscriptionUseCase: AddSubscriptionUseCase,
+    private val deleteSubscriptionUseCase: DeleteSubscriptionUseCase
 ): RootComponent, ComponentContext by componentContext, KoinComponent {
 
 
@@ -38,8 +43,15 @@ class DefaultRootComponent(
 
     private fun createChild(config: Config, context: ComponentContext): RootComponent.Child {
         return when (config) {
-            Config.Feed -> RootComponent.Child.Feed(
-                DefaultNewsFeedComponent(context, observeArticlesUseCase,refreshArticlesUseCase)
+            Config.Feed -> Feed(
+                DefaultNewsFeedComponent(context,
+                    observeArticlesPagingUseCase = observeArticlesPagingUseCase,
+                    getAllSubscriptionsUseCase = getAllSubscriptionsUseCase,
+                    addSubscriptionUseCase = addSubscriptionUseCase,
+                    deleteSubscriptionUseCase = deleteSubscriptionUseCase
+                )
+
+
             )
         }
     }

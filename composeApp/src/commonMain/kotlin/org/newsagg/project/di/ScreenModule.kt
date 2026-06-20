@@ -9,8 +9,10 @@ val screenModule = module {
     factory { (context: ComponentContext) ->
         DefaultRootComponent(
             context,
-            observeArticlesUseCase = get(),
-            refreshArticlesUseCase = get()
+            observeArticlesPagingUseCase = get(),
+            getAllSubscriptionsUseCase = get(),
+            addSubscriptionUseCase = get(),
+            deleteSubscriptionUseCase = get(),
         )
     }
 }
