@@ -7,9 +7,8 @@ import androidx.paging.RemoteMediator
 import kotlinx.coroutines.CancellationException
 import org.newsagg.project.data.local.dao.NewsDao
 import org.newsagg.project.data.local.model.ArticleDbModel
-import org.newsagg.project.data.local.model.SubscriptionDbModel
-import org.newsagg.project.data.mapper.toDbModel
 import org.newsagg.project.data.network.api.NewsApi
+import org.newsagg.project.data.mapper.toDbModel
 import kotlin.time.Clock
 
 @OptIn(ExperimentalPagingApi::class)
@@ -41,6 +40,7 @@ class NewsRemoteMediator(
             } else {
                 apiService.getNewsByQuery(query = topic, page = page, pageSize = state.config.pageSize)
             }
+
             val articlesDto = response.articles
             val endOfPaginationReached = articlesDto.isEmpty()
 
@@ -49,11 +49,11 @@ class NewsRemoteMediator(
 
             newsDao.updateArticlesTransaction(
                 topic = topic,
-                subscription = SubscriptionDbModel(topic),
                 articles = dbModels,
                 shouldClear = loadType == LoadType.REFRESH
             )
-            MediatorResult.Success(endOfPaginationReached)
+
+            MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

@@ -7,7 +7,7 @@ class AddSubscriptionUseCase(
     private val newsRepository: NewsRepository
 ) {
 
-    suspend operator fun invoke(topic: String): DataResult<Unit> {
+    suspend operator fun invoke(topic: String) {
         return newsRepository.addSubscription(topic)
     }
 }

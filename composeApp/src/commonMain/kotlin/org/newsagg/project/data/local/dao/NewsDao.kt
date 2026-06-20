@@ -39,14 +39,13 @@ interface NewsDao {
     @Transaction
     suspend fun updateArticlesTransaction(
         topic: String,
-        subscription: SubscriptionDbModel,
         articles: List<ArticleDbModel>,
         shouldClear: Boolean
     ) {
         if (shouldClear) {
             clearArticlesByTopic(topic)
         }
-        addSubscription(subscription)
+
         addArticles(articles)
     }
 
