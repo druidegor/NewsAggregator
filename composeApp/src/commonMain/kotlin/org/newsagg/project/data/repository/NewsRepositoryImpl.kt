@@ -33,8 +33,8 @@ class NewsRepositoryImpl(
             ),
             remoteMediator = NewsRemoteMediator(
                 topic = topic,
+                apiService = apiService,
                 newsDao = newsDao,
-                apiService = apiService
             ),
             pagingSourceFactory = { newsDao.pagingSource(topic)}
         ).flow.map { pagingData ->

@@ -5,8 +5,10 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import kotlinx.coroutines.CancellationException
+import org.newsagg.project.data.local.NewsDatabase
 import org.newsagg.project.data.local.dao.NewsDao
 import org.newsagg.project.data.local.model.ArticleDbModel
+import org.newsagg.project.data.local.model.NewsRemoteKeys
 import org.newsagg.project.data.network.api.NewsApi
 import org.newsagg.project.data.mapper.toDbModel
 import kotlin.time.Clock
@@ -27,11 +29,11 @@ class NewsRemoteMediator(
                 LoadType.REFRESH -> 1
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
-                    val lastItem = state.lastItemOrNull() ?: return MediatorResult.Success(
-                        endOfPaginationReached = true
+                    val remoteKeys = newsDao.getRemoteKeyByTopic(topic)
+                    val nextKey = remoteKeys?.nextPage ?: return MediatorResult.Success(
+                        endOfPaginationReached = remoteKeys != null
                     )
-                    val totalLoadedItems = state.pages.sumOf { it.data.size }
-                    (totalLoadedItems / state.config.pageSize) + 1
+                    nextKey
                 }
             }
 
@@ -47,9 +49,12 @@ class NewsRemoteMediator(
             val currentTime = Clock.System.now()
             val dbModels = articlesDto.map { it.toDbModel(topic, currentTime) }
 
-            newsDao.updateArticlesTransaction(
+            val nextPage = if (endOfPaginationReached) null else page + 1
+
+            newsDao.saveArticlesAndKeysTransaction(
                 topic = topic,
                 articles = dbModels,
+                remoteKey = NewsRemoteKeys(topic = topic, nextPage = nextPage),
                 shouldClear = loadType == LoadType.REFRESH
             )
 
