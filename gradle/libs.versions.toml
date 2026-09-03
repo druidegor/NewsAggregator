@@ -29,6 +29,7 @@ kermit = "2.0.5"
 paging = "3.4.2"
 
 [libraries]
+paging-testing = { module = "androidx.paging:paging-testing", version.ref = "paging" }
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 room-paging = { module = "androidx.room:room-paging", version.ref = "room" }

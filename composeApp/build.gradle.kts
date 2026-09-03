@@ -45,6 +45,8 @@ kotlin {
         }
         commonMain.dependencies {
 
+            implementation(compose.materialIconsExtended)
+
             implementation(libs.androidx.paging.common)
             implementation(libs.androidx.paging.compose)
             implementation(libs.room.paging)
@@ -82,6 +84,7 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
         commonTest.dependencies {
+            implementation(libs.paging.testing)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.turbine)
             implementation(libs.kotlin.test)
