@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 import org.newsagg.project.data.local.model.ArticleDbModel
 import org.newsagg.project.data.local.model.NewsRemoteKeys
 import org.newsagg.project.data.local.model.SubscriptionDbModel
-import org.newsagg.project.domain.model.Article
 
 @Dao
 interface NewsDao {
@@ -26,9 +25,6 @@ interface NewsDao {
 
     @Delete
     suspend fun deleteSubscription(subscription: SubscriptionDbModel)
-
-    @Query("SELECT * FROM articles WHERE topic in (:topic) ORDER BY publishedAt DESC")
-    fun observeArticles(topic: String): Flow<List<ArticleDbModel>>
 
     @Query("SELECT * FROM articles WHERE topic in (:topic) ORDER BY publishedAt DESC")
     fun pagingSource(topic: String): PagingSource<Int, ArticleDbModel>

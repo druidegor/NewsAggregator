@@ -5,7 +5,6 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import kotlinx.coroutines.CancellationException
-import org.newsagg.project.data.local.NewsDatabase
 import org.newsagg.project.data.local.dao.NewsDao
 import org.newsagg.project.data.local.model.ArticleDbModel
 import org.newsagg.project.data.local.model.NewsRemoteKeys
