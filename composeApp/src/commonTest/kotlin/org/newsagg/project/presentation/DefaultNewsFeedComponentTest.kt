@@ -2,17 +2,19 @@ package org.newsagg.project.presentation
 
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.arkivanov.essenty.lifecycle.resume
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.newsagg.project.data.local.model.SubscriptionDbModel
 import org.newsagg.project.data.repository.NewsRepositoryImpl
-import org.newsagg.project.domain.usecase.GetTopHeadlinesUseCase
+import org.newsagg.project.domain.usecase.AddSubscriptionUseCase
+import org.newsagg.project.domain.usecase.DeleteSubscriptionUseCase
+import org.newsagg.project.domain.usecase.GetAllSubscriptionsUseCase
+import org.newsagg.project.domain.usecase.ObserveArticlesPagingUseCase
 import org.newsagg.project.fake.FakeNewsApi
 import org.newsagg.project.fake.FakeNewsDao
 import org.newsagg.project.presentation.component.DefaultNewsFeedComponent
@@ -22,6 +24,8 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultNewsFeedComponentTest {
@@ -33,7 +37,12 @@ class DefaultNewsFeedComponentTest {
     private val newsApi = FakeNewsApi()
     private val newsDao = FakeNewsDao()
     private val repository = NewsRepositoryImpl(newsApi,newsDao)
-    private val getTopHeadlinesUseCase = GetTopHeadlinesUseCase(repository)
+
+    private val observeArticlesPagingUseCase = ObserveArticlesPagingUseCase(repository)
+    private val addSubscriptionUseCase= AddSubscriptionUseCase(repository)
+    private val deleteSubscriptionUseCase = DeleteSubscriptionUseCase(repository)
+    private val getAllSubscriptionsUseCase = GetAllSubscriptionsUseCase(repository)
+
 
     @BeforeTest
     fun setUp() {
@@ -48,55 +57,85 @@ class DefaultNewsFeedComponentTest {
     }
 
     private fun createComponent(
-        headlinesUseCase: GetTopHeadlinesUseCase = getTopHeadlinesUseCase
+        observeArticles: ObserveArticlesPagingUseCase = observeArticlesPagingUseCase,
     ): NewsFeedComponent {
         return DefaultNewsFeedComponent(
             componentContext = context,
-            getTopHeadlinesUseCase = headlinesUseCase
+            observeArticlesPagingUseCase = observeArticles,
+            addSubscriptionUseCase = addSubscriptionUseCase,
+            getAllSubscriptionsUseCase = getAllSubscriptionsUseCase,
+            deleteSubscriptionUseCase = deleteSubscriptionUseCase
         )
     }
 
     @Test
-    fun init_block_emits_Loading_then_Success_states() = runTest {
-
+    fun init_shouldLoadSubscriptionsAndSelectFirstTopic() = runTest {
+        newsDao.addSubscription(SubscriptionDbModel("Kotlin"))
+        newsDao.addSubscription(SubscriptionDbModel("Android"))
 
         val component = createComponent()
-
-        assertEquals(NewsFeedComponent.NewsFeedState(),component.state.value)
-
-        lifecycle.resume()
         runCurrent()
 
-        assertEquals(NewsFeedComponent.NewsFeedState(emptyList(), isLoading = true, error = null),component.state.value)
-
-        advanceTimeBy(500)
-        runCurrent()
-
-        val finalState = component.state.value
-        assertEquals(false, finalState.isLoading)
-        assertEquals(null,finalState.error)
-
+        val state = component.state.value
+        assertEquals(listOf("Kotlin", "Android"), state.subscriptions)
+        assertEquals("Kotlin", state.selectedTopic)
     }
 
     @Test
-    fun init_block_emits_Loading_then_Error_states_when_error_is_thrown() = runTest {
-
-        newsApi.shouldTrowException = Exception("No internet connection")
+    fun onSearchQueryChanged_shouldUpdateQueryInState() = runTest {
         val component = createComponent()
 
-        assertEquals(NewsFeedComponent.NewsFeedState(),component.state.value)
+        component.onSearchQueryChanged("KMP")
 
+        assertEquals("KMP", component.state.value.query)
+    }
+
+    @Test
+    fun onAddSubscription_shouldAddSubscriptionAndResetQuery() = runTest {
+        val component = createComponent()
+        component.onSearchQueryChanged("   Kotlin   ")
+
+        component.onAddSubscription()
         runCurrent()
 
-        assertEquals(NewsFeedComponent.NewsFeedState(emptyList(), isLoading = true, error = null),component.state.value)
+        assertEquals("", component.state.value.query)
+        assertTrue(newsDao.subscriptions.value.any { it.topic == "Kotlin" })
+    }
 
-        advanceTimeBy(500)
+    @Test
+    fun onAddSubscription_whenQueryIsEmpty_shouldDoNothing() = runTest {
+        val component = createComponent()
+        component.onSearchQueryChanged("   ")
+
+        component.onAddSubscription()
         runCurrent()
 
-        val finalState = component.state.value
-        assertEquals(false, finalState.isLoading)
-        assertEquals("No internet connection",finalState.error)
-        assertEquals(emptyList(),finalState.articles)
+        assertTrue(newsDao.subscriptions.value.isEmpty())
+    }
 
+    @Test
+    fun onDeleteSubscription_shouldRemoveSubscriptionFromDao() = runTest {
+        newsDao.addSubscription(SubscriptionDbModel("Kotlin"))
+        val component = createComponent()
+        runCurrent()
+
+        component.onDeleteSubscription("Kotlin")
+        runCurrent()
+
+        assertTrue(newsDao.subscriptions.value.none { it.topic == "Kotlin" })
+    }
+
+    @Test
+    fun onToggleTopicSelection_shouldSwitchOrDeselectTopic() = runTest {
+        newsDao.addSubscription(SubscriptionDbModel("Kotlin"))
+        newsDao.addSubscription(SubscriptionDbModel("Android"))
+        val component = createComponent()
+        runCurrent()
+
+        component.onToggleTopicSelection("Android")
+        assertEquals("Android", component.state.value.selectedTopic)
+
+        component.onToggleTopicSelection("Android")
+        assertNull(component.state.value.selectedTopic)
     }
 }

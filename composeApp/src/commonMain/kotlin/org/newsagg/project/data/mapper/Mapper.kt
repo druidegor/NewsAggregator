@@ -9,19 +9,9 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-fun ArticleDto.toDomain(): Article {
-    return Article(
-        title = title ?: "",
-        description = description ?: "",
-        publishedAt = publishedAt?.toInstantTimestamp() ?: Clock.System.now(),
-        sourceName = source?.name ?: "",
-        url = url ?: "",
-        imageUrl = urlToImage
-    )
-}
 
 @OptIn(ExperimentalTime::class)
-fun String.toInstantTimestamp(): Instant{
+private fun String.toInstantTimestamp(): Instant{
     return try {
         Instant.parse(this)
     } catch (e: Exception) {
@@ -29,32 +19,23 @@ fun String.toInstantTimestamp(): Instant{
     }
 }
 
-
-fun String.toLongTimestamp(): Long {
-    return try {
-        val instant = Instant.parse(this)
-        instant.toEpochMilliseconds()
-    } catch (e: Exception) {
-        Clock.System.now().toEpochMilliseconds()
-    }
-}
-fun ArticleDto.toDbModel(topic: String): ArticleDbModel {
+fun ArticleDto.toDbModel(topic: String, cachedAt: Instant): ArticleDbModel {
     return ArticleDbModel(
         title = title ?: "",
         description = description ?: "",
-        publishedAt = publishedAt?.toLongTimestamp() ?: 0,
+        publishedAt = publishedAt?.toInstantTimestamp() ?: Clock.System.now(),
         sourceName = source?.name ?: "",
         url = url ?: "",
         imageUrl = urlToImage,
-        topic = topic
+        topic = topic,
+        cachedAt = cachedAt
     )
 }
-
 fun ArticleDbModel.toDomain(): Article {
     return Article(
         title = title,
         description = description,
-        publishedAt = Instant.fromEpochMilliseconds(publishedAt),
+        publishedAt = publishedAt,
         sourceName = sourceName,
         url = url,
         imageUrl = imageUrl

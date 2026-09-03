@@ -45,6 +45,12 @@ kotlin {
         }
         commonMain.dependencies {
 
+            implementation(compose.materialIconsExtended)
+
+            implementation(libs.androidx.paging.common)
+            implementation(libs.androidx.paging.compose)
+            implementation(libs.room.paging)
+
             implementation(libs.decompose)
             implementation(libs.decompose.compose)
 
@@ -78,6 +84,7 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
         commonTest.dependencies {
+            implementation(libs.paging.testing)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.turbine)
             implementation(libs.kotlin.test)
@@ -94,6 +101,10 @@ kotlin {
         jvmTest.dependencies {
             implementation(libs.kotlin.testJunit)
         }
+    }
+
+    compilerOptions {
+        freeCompilerArgs.add("-opt-in=kotlin.time.ExperimentalTime")
     }
 }
 
